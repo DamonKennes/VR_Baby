@@ -1,0 +1,15 @@
+.header {
+    font-size: 40px;
+    -unity-text-align: upper-center;
+    -unity-font-style: bold;
+    color: rgb(127, 239, 255);
+    -unity-font: initial;
+}
+
+.button {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: rgb(0, 0, 0);
+    background-color: rgb(188, 188, 188);
+    -unity-text-align: middle-center;
+}
