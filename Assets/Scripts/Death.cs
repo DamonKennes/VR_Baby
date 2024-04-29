@@ -23,7 +23,12 @@ public class Death : MonoBehaviour
 
     public void Die()
     {
-        this.gameObject.GetComponent<Animator>().runtimeAnimatorController = death;
+        if(this.gameObject.GetComponent<Animation>() != null){
+                        this.gameObject.GetComponent<Animation>().Play("death");
+        }
+        else{
+                        this.gameObject.GetComponent<Animator>().runtimeAnimatorController = death;
+        }
     }
 
 

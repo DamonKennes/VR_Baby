@@ -27,10 +27,13 @@ public class SimpleShoot : MonoBehaviour
 
     private bool isGrabbed;
 
+    private AudioSource _audioSource;
+
 
     void Start()
     {
         isGrabbed = false;
+        _audioSource = GetComponent<AudioSource>();
         if (barrelLocation == null)
             barrelLocation = transform;
 
@@ -45,6 +48,7 @@ public class SimpleShoot : MonoBehaviour
         {
             //Calls animation on the gun that has the relevant animation events that will fire
             gunAnimator.SetTrigger("Fire");
+            _audioSource.Play();
         }
     }
 
