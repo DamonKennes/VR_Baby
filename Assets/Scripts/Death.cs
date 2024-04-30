@@ -8,6 +8,7 @@ public class Death : MonoBehaviour
 {
     public RuntimeAnimatorController death;
     public GameObject knife;
+    public bool hasDied = false;
 
     // Start is called before the first frame update
     void Start()
@@ -23,12 +24,18 @@ public class Death : MonoBehaviour
 
     public void Die()
     {
-        if(this.gameObject.GetComponent<Animation>() != null){
-                        this.gameObject.GetComponent<Animation>().Play("death");
-        }
-        else{
-                        this.gameObject.GetComponent<Animator>().runtimeAnimatorController = death;
-        }
+        if (!hasDied)
+        {
+            if (this.gameObject.GetComponent<Animation>() != null)
+            {
+                this.gameObject.GetComponent<Animation>().Play("death");
+            }
+            else
+            {
+                this.gameObject.GetComponent<Animator>().runtimeAnimatorController = death;
+            }
+            hasDied = true;
+        }      
     }
 
 

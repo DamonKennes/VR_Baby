@@ -10,17 +10,15 @@ public class ExperimentManager : MonoBehaviour
 {
     // environments is a list of names of scenes
     public List<string> environments;
-    // characters are gameobjects to be added to the environment scene
-    public List<GameObject> characters;
-    // weapons are gameobjects to be added to the environment scene
-    public List<GameObject> weapons;
 
-    private List<string> subjectData;
+    private List<int[]> subjectData;
 
     // ui stuff
     private UIDocument adminDocument;
     private Button loadSceneButton;
     private DropdownField loadSceneField;
+
+
 
 
     private void Awake()
@@ -34,7 +32,11 @@ public class ExperimentManager : MonoBehaviour
         loadSceneButton = adminDocument.rootVisualElement.Q("LoadSceneButton") as Button;
         loadSceneField = adminDocument.rootVisualElement.Q("LoadSceneField") as DropdownField;
         loadSceneButton.RegisterCallback<ClickEvent>((_) => {
-            LoadScene(loadSceneField.text); 
+            subjectData = new List<int[]>
+            {
+                new int[] { 0, 0, 0 }
+            };
+            GenerateAndLoadScene();
         });
     }
 
@@ -53,25 +55,43 @@ public class ExperimentManager : MonoBehaviour
 
     // generates a scene and loads it based on given sceneData
     // sceneData is a string of three characters, character 0 is the index of the environment, character 1 is the index of the character, character 2 is the index of the weapon
-    public void GenerateAndLoadScene(string sceneData) 
+    public void GenerateAndLoadScene() 
     {
-        if (sceneData.Length != 3) {
-            Debug.LogError("Invalid scene data");
-            return;
-        }
-        LoadScene(environments[Convert.ToInt32(sceneData[0])]);
-        Instantiate(characters[Convert.ToInt32(sceneData[1])]);
-        Instantiate(weapons[Convert.ToInt32(sceneData[2])]);
+        LoadScene(environments[subjectData[0][0]]);
+        Invoke("LoadWeaponAndCharacter", 3f);
+    }
+
+    private void LoadWeaponAndCharacter()
+    {
+
+        GameObject.Find("Weapons").transform.GetChild(subjectData[0][1]).gameObject.SetActive(true);
+        GameObject.Find("Characters").transform.GetChild(subjectData[0][2]).gameObject.SetActive(true);
+
+        subjectData.RemoveAt(0);
     }
 
     // start the user study
     public void StartUserStudy(string groupId) 
     {
+        if (groupId == "A1") {
+            subjectData = new List<int[]>
+            {
+                new int[] {1, 2, 2},
+                new int[] {0, 2, 1},
+                new int[] {1, 2, 0},
+                new int[] {1, 0, 1},
+            };
+        }
         // example
-        string groupA1 = "000+010+103+201";
-        subjectData = groupA1.Split('+').ToList<string>();
-        GenerateAndLoadScene(subjectData[0]);
-        subjectData.RemoveAt(0);
+        subjectData = new List<int[]>
+        {
+            new int[] {1, 2, 2},
+            new int[] {0, 2, 1},
+            new int[] {1, 2, 0},
+            new int[] {1, 0, 1},
+        };
+
+        GenerateAndLoadScene();
     }
 
     // continue user study: load next scene after task is completed
@@ -86,8 +106,7 @@ public class ExperimentManager : MonoBehaviour
             //return;
         }
         // load next scene
-        GenerateAndLoadScene(subjectData[0]);
-        subjectData.RemoveAt(0);
+        GenerateAndLoadScene();
     }
 
 }
