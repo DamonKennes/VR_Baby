@@ -11,12 +11,12 @@ public class ExperimentManager : MonoBehaviour
     // environments is a list of names of scenes
     public List<string> environments;
 
-    private List<int[]> subjectData;
+    private List<int[]> scenesData;
 
     // ui stuff
     private UIDocument adminDocument;
     private Button loadSceneButton;
-    private DropdownField loadSceneField;
+    private Vector3IntField loadSceneField;
 
 
 
@@ -30,13 +30,13 @@ public class ExperimentManager : MonoBehaviour
         adminDocument = GetComponent<UIDocument>();
         
         loadSceneButton = adminDocument.rootVisualElement.Q("LoadSceneButton") as Button;
-        loadSceneField = adminDocument.rootVisualElement.Q("LoadSceneField") as DropdownField;
+        loadSceneField = adminDocument.rootVisualElement.Q("LoadSceneField") as Vector3IntField;
         loadSceneButton.RegisterCallback<ClickEvent>((_) => {
-            subjectData = new List<int[]>
+            scenesData = new List<int[]>
             {
-                new int[] { 0, 0, 0 }
+                new int[] { loadSceneField.value.x, loadSceneField.value.y, loadSceneField.value.z }
             };
-            GenerateAndLoadScene();
+            GenerateAndLoadNextScene();
         });
     }
 
@@ -44,37 +44,45 @@ public class ExperimentManager : MonoBehaviour
     {
     }
 
-    // loads a new scene by name
-    public void LoadScene(string sceneName) 
+
+    // starts the coroutine that will generate and load the next scene provided in subjectData
+    public void GenerateAndLoadNextScene() 
+    {
+        StartCoroutine(StartGeneratingAndLoadingScene());
+    }
+
+    // will generate and load the scene
+    private IEnumerator StartGeneratingAndLoadingScene()
     {
         // disable the ui
         adminDocument.enabled = false;
-        // load scene
-        SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
-    }
 
-    // generates a scene and loads it based on given sceneData
-    // sceneData is a string of three characters, character 0 is the index of the environment, character 1 is the index of the character, character 2 is the index of the weapon
-    public void GenerateAndLoadScene() 
-    {
-        LoadScene(environments[subjectData[0][0]]);
-        Invoke("LoadWeaponAndCharacter", 3f);
-    }
+        // load scene async
+        AsyncOperation asyncSceneLoader = SceneManager.LoadSceneAsync(environments[scenesData[0][0]], LoadSceneMode.Single);
+        Debug.Log("Loading " + environments[scenesData[0][0]]);
 
-    private void LoadWeaponAndCharacter()
-    {
+        // wait for the scene to be loaded
+        while (!asyncSceneLoader.isDone)
+        {
+            yield return null;
+        }
+        Debug.Log("Scene succesfully loaded");
 
-        GameObject.Find("Weapons").transform.GetChild(subjectData[0][1]).gameObject.SetActive(true);
-        GameObject.Find("Characters").transform.GetChild(subjectData[0][2]).gameObject.SetActive(true);
+        // now the scene is loaded:
+        // activate the correct weapon
+        GameObject.Find("Weapons").transform.GetChild(scenesData[0][1]).gameObject.SetActive(true);
+        // activate the correct character
+        GameObject.Find("Characters").transform.GetChild(scenesData[0][2]).gameObject.SetActive(true);
 
-        subjectData.RemoveAt(0);
+        // update the list with our scene data
+        scenesData.RemoveAt(0);
     }
 
     // start the user study
     public void StartUserStudy(string groupId) 
     {
         if (groupId == "A1") {
-            subjectData = new List<int[]>
+            scenesData = new List<int[]>
             {
                 new int[] {1, 2, 2},
                 new int[] {0, 2, 1},
@@ -83,7 +91,7 @@ public class ExperimentManager : MonoBehaviour
             };
         }
         // example
-        subjectData = new List<int[]>
+        scenesData = new List<int[]>
         {
             new int[] {1, 2, 2},
             new int[] {0, 2, 1},
@@ -91,7 +99,7 @@ public class ExperimentManager : MonoBehaviour
             new int[] {1, 0, 1},
         };
 
-        GenerateAndLoadScene();
+        GenerateAndLoadNextScene();
     }
 
     // continue user study: load next scene after task is completed
@@ -99,14 +107,14 @@ public class ExperimentManager : MonoBehaviour
     {
         // collect and store results etc
 
-        if(subjectData.Count == 0)
+        if(scenesData.Count == 0)
         {
             // finished
             //LoadEndScreenScene();
             //return;
         }
         // load next scene
-        GenerateAndLoadScene();
+        GenerateAndLoadNextScene();
     }
 
 }
