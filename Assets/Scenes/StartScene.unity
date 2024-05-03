@@ -155,12 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   environments:
   - Fantasy Forest
-  characters:
-  - Goblin
-  weapons:
-  - Knife
-  - Gun
-  - Button
+  - Cabin
 --- !u!4 &42149477
 Transform:
   m_ObjectHideFlags: 0
