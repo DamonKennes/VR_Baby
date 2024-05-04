@@ -156,6 +156,7 @@ MonoBehaviour:
   environments:
   - Fantasy Forest
   - Cabin
+  - House
 --- !u!4 &42149477
 Transform:
   m_ObjectHideFlags: 0

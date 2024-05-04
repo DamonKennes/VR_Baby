@@ -9,6 +9,7 @@ public class Death : MonoBehaviour
     public RuntimeAnimatorController death;
     public GameObject knife;
     public bool hasDied = false;
+    public GameObject blood;
 
     // Start is called before the first frame update
     void Start()
@@ -42,9 +43,18 @@ public class Death : MonoBehaviour
     public void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.Equals(knife)) {
+            if (!hasDied){
+                knife.GetComponent<AudioSource>().Play();
+                blood.transform.position = other.gameObject.transform.position;
+                blood.GetComponentInChildren<ParticleSystem>().Play();
+                }
             Die(); 
         }
         if (other.gameObject.CompareTag("bullet")) { 
+            if (!hasDied){
+                blood.transform.position = other.gameObject.transform.position;
+                blood.GetComponentInChildren<ParticleSystem>().Play();
+                }
             Die(); 
         }
     }
