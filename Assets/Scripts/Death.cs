@@ -36,7 +36,9 @@ public class Death : MonoBehaviour
                 this.gameObject.GetComponent<Animator>().runtimeAnimatorController = death;
             }
             hasDied = true;
-        }      
+
+            GameObject.Find("Experiment Manager").GetComponent<ExperimentManager>().FinishedTask();
+        }
     }
 
 
