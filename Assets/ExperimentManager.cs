@@ -34,7 +34,10 @@ public class ExperimentManager : MonoBehaviour
     {
         FantasyForest,
         Cabin,
-        House
+        House,
+        CabinField,
+        LowPolyForest,
+        Market
     }
 
     protected enum Weapon 
@@ -46,11 +49,12 @@ public class ExperimentManager : MonoBehaviour
 
     protected enum Character 
     {
-        Goblin,
+        TinyHero,
         Zombie,
         Eggy,
-        Man,
-        Woman
+        Kiwi,
+        Wolf,
+        Human
     }
 
 
@@ -140,8 +144,8 @@ public class ExperimentManager : MonoBehaviour
             case "A1":
                 scenesData = new List<int[]>
                 {
-                    new int[] { (int)Environment.FantasyForest, (int)Weapon.Gun, (int)Character.Man },
-                    new int[] { (int)Environment.Cabin, (int)Weapon.Button, (int)Character.Goblin },
+                    new int[] { (int)Environment.FantasyForest, (int)Weapon.Gun, (int)Character.Human },
+                    new int[] { (int)Environment.Cabin, (int)Weapon.Button, (int)Character.Wolf },
                     new int[] { (int)Environment.House, (int)Weapon.Knife, (int)Character.Eggy },
                     new int[] { (int)Environment.Cabin, (int)Weapon.Gun, (int)Character.Zombie },
                 };

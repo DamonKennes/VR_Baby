@@ -157,6 +157,9 @@ MonoBehaviour:
   - Fantasy Forest
   - Cabin
   - House
+  - Cabin Field
+  - Low Poly Forest
+  - Market
 --- !u!4 &42149477
 Transform:
   m_ObjectHideFlags: 0
