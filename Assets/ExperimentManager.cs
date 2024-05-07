@@ -18,7 +18,34 @@ public class ExperimentManager : MonoBehaviour
     private Button loadSceneButton;
     private Vector3IntField loadSceneField;
 
+    private Button startButton;
+    private TextField userIdField;
+    private DropdownField groupField;
 
+    private string userId;
+
+    protected enum Environment
+    {
+        FantasyForest,
+        Cabin,
+        House
+    }
+
+    protected enum Weapon 
+    {
+        Button,
+        Gun,
+        Knife
+    }
+
+    protected enum Character 
+    {
+        Goblin,
+        Zombie,
+        Eggy,
+        Man,
+        Woman
+    }
 
 
     private void Awake()
@@ -38,10 +65,24 @@ public class ExperimentManager : MonoBehaviour
             };
             GenerateAndLoadNextScene();
         });
+
+        startButton = adminDocument.rootVisualElement.Q("StartButton") as Button;
+        userIdField = adminDocument.rootVisualElement.Q("SubjectId") as TextField;
+        groupField = adminDocument.rootVisualElement.Q("GroupField") as DropdownField;
+        startButton.RegisterCallback<ClickEvent>((_) => {
+            userId = userIdField.text;
+            StartUserStudy(groupField.value);
+        });
+
+
     }
 
     void Update()
     {
+
+        if (Input.GetKeyDown(KeyCode.Return)) {
+            ContinueUserStudy();
+        }
     }
 
 
@@ -81,23 +122,31 @@ public class ExperimentManager : MonoBehaviour
     // start the user study
     public void StartUserStudy(string groupId) 
     {
-        if (groupId == "A1") {
-            scenesData = new List<int[]>
-            {
-                new int[] {1, 2, 2},
-                new int[] {0, 2, 1},
-                new int[] {1, 2, 0},
-                new int[] {1, 0, 1},
-            };
-        }
-        // example
-        scenesData = new List<int[]>
+        switch (groupId)
         {
-            new int[] {1, 2, 2},
-            new int[] {0, 2, 1},
-            new int[] {1, 2, 0},
-            new int[] {1, 0, 1},
-        };
+            case "A1":
+                scenesData = new List<int[]>
+                {
+                    new int[] { (int)Environment.FantasyForest, (int)Weapon.Gun, (int)Character.Man },
+                    new int[] { (int)Environment.Cabin, (int)Weapon.Button, (int)Character.Goblin },
+                    new int[] { (int)Environment.House, (int)Weapon.Knife, (int)Character.Eggy },
+                    new int[] { (int)Environment.Cabin, (int)Weapon.Gun, (int)Character.Zombie },
+                };
+                break;
+            case "A2":
+                break;
+            case "A3":
+                break;
+            case "B1":
+                break;
+            case "B2":
+                break;
+            case "B3":
+                break;
+            default:
+                Debug.LogError("Unknown group identifier");
+                break;
+        }
 
         GenerateAndLoadNextScene();
     }
@@ -109,6 +158,8 @@ public class ExperimentManager : MonoBehaviour
 
         if(scenesData.Count == 0)
         {
+            Debug.Log("Finished!");
+            return;
             // finished
             //LoadEndScreenScene();
             //return;
