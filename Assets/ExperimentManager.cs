@@ -201,7 +201,7 @@ public class ExperimentManager : MonoBehaviour
 
         using (StreamWriter outputFile = new StreamWriter(Path.Combine(path, userId + ".txt"), true))
         {
-            outputFile.WriteLine("Env: " + environments[scenesData[0][0]] + " Weapon: " + ((Weapon)scenesData[0][1]).ToString() + " Char: " + ((Character)scenesData[0][2]).ToString());
+            outputFile.WriteLine("Env: " + environments[scenesData[0][0]] + ", Weapon: " + ((Weapon)scenesData[0][1]).ToString() + ", Char: " + ((Character)scenesData[0][2]).ToString());
             if (isMurderer)
             {
                 outputFile.WriteLine("Character has been killed");
@@ -211,6 +211,7 @@ public class ExperimentManager : MonoBehaviour
                 outputFile.WriteLine("Character has been spared");
             }
             outputFile.WriteLine("Timer: " + timer);
+            outputFile.WriteLine();
         }
         Debug.Log("Stored data in " + path);
     }
