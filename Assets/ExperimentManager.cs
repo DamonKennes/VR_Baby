@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
@@ -22,7 +25,10 @@ public class ExperimentManager : MonoBehaviour
     private TextField userIdField;
     private DropdownField groupField;
 
+    // storing data stuff
     private string userId;
+    private float timer = 0f;
+    private bool isRunning = false;
 
     protected enum Environment
     {
@@ -77,9 +83,12 @@ public class ExperimentManager : MonoBehaviour
 
     }
 
+    // keep track of timer
     void Update()
     {
-
+        if(isRunning) {
+            timer += Time.deltaTime;
+        }
         if (Input.GetKeyDown(KeyCode.Return)) {
             ContinueUserStudy();
         }
@@ -89,6 +98,9 @@ public class ExperimentManager : MonoBehaviour
     // starts the coroutine that will generate and load the next scene provided in subjectData
     public void GenerateAndLoadNextScene() 
     {
+        // reset timer:
+        timer = 0f;
+        // start coroutine
         StartCoroutine(StartGeneratingAndLoadingScene());
     }
 
@@ -115,8 +127,9 @@ public class ExperimentManager : MonoBehaviour
         // activate the correct character
         GameObject.Find("Characters").transform.GetChild(scenesData[0][2]).gameObject.SetActive(true);
 
-        // update the list with our scene data
-        scenesData.RemoveAt(0);
+        // start timer
+        isRunning = true;
+
     }
 
     // start the user study
@@ -152,20 +165,54 @@ public class ExperimentManager : MonoBehaviour
     }
 
     // continue user study: load next scene after task is completed
-    public void ContinueUserStudy() 
+    private void ContinueUserStudy() 
     {
-        // collect and store results etc
+        // if character has not beel killed:
+        storeData(false);
 
-        if(scenesData.Count == 0)
+        // update the list with our scene data (remove the previously loaded scene)
+        scenesData.RemoveAt(0);
+
+        // if no more scene data:
+        if (scenesData.Count == 0)
         {
             Debug.Log("Finished!");
-            return;
             // finished
             //LoadEndScreenScene();
-            //return;
+            return;
         }
-        // load next scene
+        // else load next scene:
         GenerateAndLoadNextScene();
+    }
+
+    // collect and store results
+    public void FinishedTask() 
+    {
+        // stop timer
+        isRunning = false;
+        // store data
+        storeData(true);
+    }
+
+    private void storeData(bool isMurderer) 
+    {
+        // store data
+        string path = Application.persistentDataPath;
+
+        using (StreamWriter outputFile = new StreamWriter(Path.Combine(path, userId + ".txt"), true))
+        {
+            outputFile.WriteLine("Env: " + environments[scenesData[0][0]] + " Weapon: " + ((Weapon)scenesData[0][1]).ToString() + " Char: " + ((Character)scenesData[0][2]).ToString());
+            if (isMurderer)
+            {
+                outputFile.WriteLine("Character has been killed");
+            }
+            else
+            {
+                outputFile.WriteLine("Character has been spared");
+            }
+            outputFile.WriteLine("Timer: " + timer);
+        }
+        Debug.Log("Stored data in " + path);
     }
 
 }
