@@ -84,7 +84,6 @@ public class ExperimentManager : MonoBehaviour
             StartUserStudy(groupField.value);
         });
 
-
     }
 
     // keep track of timer
@@ -139,26 +138,90 @@ public class ExperimentManager : MonoBehaviour
     // start the user study
     public void StartUserStudy(string groupId) 
     {
+        /*
+         * Group A: 
+         * HUMAN HOUSE
+         * WOLF MARKET
+         * ZOMBIE CABIN
+         * EGG HOUSE
+         * HERO MARKET
+         * KIWI FIELD
+         * 
+         * GROUP B:
+         * KIWI FOREST
+         * HERO CABIN
+         * EGG LOWPOLY
+         * ZOMBIE LOWPOLY
+         * WOLF FIELD
+         * HUMAN FOREST
+         */
         switch (groupId)
         {
             case "A1":
                 scenesData = new List<int[]>
                 {
-                    new int[] { (int)Environment.FantasyForest, (int)Weapon.Gun, (int)Character.Human },
-                    new int[] { (int)Environment.Cabin, (int)Weapon.Button, (int)Character.Wolf },
-                    new int[] { (int)Environment.House, (int)Weapon.Knife, (int)Character.Eggy },
-                    new int[] { (int)Environment.Cabin, (int)Weapon.Gun, (int)Character.Zombie },
+                    new int[] { (int)Environment.House, (int)Weapon.Gun, (int)Character.Human },
+                    new int[] { (int)Environment.Market, (int)Weapon.Knife, (int)Character.Wolf },
+                    new int[] { (int)Environment.Cabin, (int)Weapon.Button, (int)Character.Zombie },
+                    new int[] { (int)Environment.House, (int)Weapon.Gun, (int)Character.Eggy },
+                    new int[] { (int)Environment.Market, (int)Weapon.Knife, (int)Character.TinyHero },
+                    new int[] { (int)Environment.CabinField, (int)Weapon.Button, (int)Character.Kiwi }
                 };
                 break;
             case "A2":
+                scenesData = new List<int[]>
+                {
+                    new int[] { (int)Environment.House, (int)Weapon.Knife, (int)Character.Human },
+                    new int[] { (int)Environment.Market, (int)Weapon.Button, (int)Character.Wolf },
+                    new int[] { (int)Environment.Cabin, (int)Weapon.Gun, (int)Character.Zombie },
+                    new int[] { (int)Environment.House, (int)Weapon.Knife, (int)Character.Eggy },
+                    new int[] { (int)Environment.Market, (int)Weapon.Button, (int)Character.TinyHero },
+                    new int[] { (int)Environment.CabinField, (int)Weapon.Gun, (int)Character.Kiwi }
+                };
                 break;
             case "A3":
+                scenesData = new List<int[]>
+                {
+                    new int[] { (int)Environment.House, (int)Weapon.Button, (int)Character.Human },
+                    new int[] { (int)Environment.Market, (int)Weapon.Gun, (int)Character.Wolf },
+                    new int[] { (int)Environment.Cabin, (int)Weapon.Knife, (int)Character.Zombie },
+                    new int[] { (int)Environment.House, (int)Weapon.Button, (int)Character.Eggy },
+                    new int[] { (int)Environment.Market, (int)Weapon.Gun, (int)Character.TinyHero },
+                    new int[] { (int)Environment.CabinField, (int)Weapon.Knife, (int)Character.Kiwi }
+                };
                 break;
             case "B1":
+                scenesData = new List<int[]>
+                {
+                    new int[] { (int)Environment.FantasyForest, (int)Weapon.Gun, (int)Character.Kiwi },
+                    new int[] { (int)Environment.Cabin, (int)Weapon.Knife, (int)Character.TinyHero },
+                    new int[] { (int)Environment.LowPolyForest, (int)Weapon.Button, (int)Character.Eggy },
+                    new int[] { (int)Environment.LowPolyForest, (int)Weapon.Gun, (int)Character.Zombie },
+                    new int[] { (int)Environment.CabinField, (int)Weapon.Knife, (int)Character.Wolf },
+                    new int[] { (int)Environment.FantasyForest, (int)Weapon.Button, (int)Character.Human }
+                };
                 break;
             case "B2":
+                scenesData = new List<int[]>
+                {
+                    new int[] { (int)Environment.FantasyForest, (int)Weapon.Knife, (int)Character.Kiwi },
+                    new int[] { (int)Environment.Cabin, (int)Weapon.Button, (int)Character.TinyHero },
+                    new int[] { (int)Environment.LowPolyForest, (int)Weapon.Gun, (int)Character.Eggy },
+                    new int[] { (int)Environment.LowPolyForest, (int)Weapon.Knife, (int)Character.Zombie },
+                    new int[] { (int)Environment.CabinField, (int)Weapon.Button, (int)Character.Wolf },
+                    new int[] { (int)Environment.FantasyForest, (int)Weapon.Gun, (int)Character.Human }
+                };
                 break;
             case "B3":
+                scenesData = new List<int[]>
+                {
+                    new int[] { (int)Environment.FantasyForest, (int)Weapon.Button, (int)Character.Kiwi },
+                    new int[] { (int)Environment.Cabin, (int)Weapon.Gun, (int)Character.TinyHero },
+                    new int[] { (int)Environment.LowPolyForest, (int)Weapon.Knife, (int)Character.Eggy },
+                    new int[] { (int)Environment.LowPolyForest, (int)Weapon.Button, (int)Character.Zombie },
+                    new int[] { (int)Environment.CabinField, (int)Weapon.Gun, (int)Character.Wolf },
+                    new int[] { (int)Environment.FantasyForest, (int)Weapon.Knife, (int)Character.Human }
+                };
                 break;
             default:
                 Debug.LogError("Unknown group identifier");
@@ -171,8 +234,11 @@ public class ExperimentManager : MonoBehaviour
     // continue user study: load next scene after task is completed
     private void ContinueUserStudy() 
     {
-        // if character has not beel killed:
-        storeData(false);
+        // if timer is still running it means the character has not been killed: store the data now
+        if (isRunning)
+        {
+            storeData(false);
+        }
 
         // update the list with our scene data (remove the previously loaded scene)
         scenesData.RemoveAt(0);
@@ -189,7 +255,7 @@ public class ExperimentManager : MonoBehaviour
         GenerateAndLoadNextScene();
     }
 
-    // collect and store results
+    // collect and store results after murder has been committed
     public void FinishedTask() 
     {
         // stop timer
